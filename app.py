@@ -1,13 +1,17 @@
 from flask import Flask, request
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-from datetime_t import datetime
+from datetime import datetime
+import os, json
 
 app = Flask(__name__)
 
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials/gsheet-key.json", scope)
+
+# LOAD KEY FROM ENV VARIABLE
+json_key = json.loads(os.getenv("GOOGLE_SERVICE_ACCOUNT_KEY"))
+creds = ServiceAccountCredentials.from_json_keyfile_dict(json_key, scope)
 client = gspread.authorize(creds)
 sheet = client.open("Gym_Leads").sheet1
 
