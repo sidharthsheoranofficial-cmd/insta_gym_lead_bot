@@ -6,10 +6,12 @@ import os, json
 
 app = Flask(__name__)
 
-scope = ["https://spreadsheets.google.com/feeds",
-         "https://www.googleapis.com/auth/drive"]
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive"
+]
 
-# LOAD KEY FROM ENV VARIABLE
+# Load Google Service Account from Render Env Variable
 json_key = json.loads(os.getenv("GOOGLE_SERVICE_ACCOUNT_KEY"))
 creds = ServiceAccountCredentials.from_json_keyfile_dict(json_key, scope)
 client = gspread.authorize(creds)
@@ -29,5 +31,8 @@ def webhook():
 
     return {"status": "success"}, 200
 
+
+# REQUIRED FOR RENDER
 if __name__ == '__main__':
-    app.run(port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
